@@ -15,12 +15,12 @@
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-12 text-center">
-			<h1>All type of URL Injection Fuzzer</h1>
+			<h4>All type of URL Injection Fuzzer</h4>
 		</div>
 	</div>
-	<div class="row">
+	<div class="row p-0 m-0">
 		<div class="col-6">
-			<div class="input-group mb-3">
+			<div class="input-group ">
 				<label class="input-group-text">Payloads link</label> 
 				<input type="text"  id="urla" class="form-control" placeholder="Enter your payloads link" value="https://raw.githubusercontent.com/h6nt3r/payloads/refs/heads/main/xss/xssBlind.txt">
 				<button class="btn btn-danger" onclick="getKeywordss()">Get Lists</button>
@@ -28,7 +28,7 @@
 			
 		</div>
 		<div class="col-6">
-			<div class="input-group mb-3">
+			<div class="input-group">
 				<span class="input-group-text">Target</span> 
 				<input type="text" id="targets" value='http://testphp.vulnweb.com?cat=FUZZ&test=1' class="form-control" placeholder='http://testphp.vulnweb.com?cat=FUZZ&test=1'>
 				<button class="btn btn-danger input-group-text" onclick="Generate()">Generate links</button>
@@ -41,13 +41,13 @@
 		</div>
 		<div class="col-12">
 			<table>
-				<div id="results" class="form-control" style=""></div>
+				<div id="results" class="form-control"></div>
 			</table>
 		</div>
 	</div>
 </div>
 
-<div class="container">
+<div class="container-fluid">
     <div class="row text-center">
         <div class="col-12">
             <p class=""> Developed by <a href="https://x.com/mijanhaque_" target="_blank">Mijanur Rahman</a> </p>
