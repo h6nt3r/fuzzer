@@ -21,3 +21,25 @@ function Generate() {
         }
     });
 }
+function resetAll() {
+    document.getElementById('urla').value = '';
+    document.getElementById('targets').value = '';
+    document.getElementById('keywords1').value = '';
+    document.getElementById('results').innerHTML = '';
+}
+
+function toggleTheme() {
+    const body = document.body;
+    const button = document.getElementById('themeToggleBtn');
+    body.classList.toggle('dark-mode');
+    
+    if (body.classList.contains('dark-mode')) {
+        button.textContent = 'Light Mode';
+        button.classList.remove('btn-dark');
+        button.classList.add('btn-light');
+    } else {
+        button.textContent = 'Dark Mode';
+        button.classList.remove('btn-light');
+        button.classList.add('btn-dark');
+    }
+}

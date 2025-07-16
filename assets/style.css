@@ -19,3 +19,27 @@
 #results a:visited {
     color: red;
 }
+body.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+body.dark-mode .form-control,
+body.dark-mode .input-group-text {
+    background-color: #1e1e1e;
+    color: #fff;
+    border-color: #444;
+}
+
+body.dark-mode .btn-danger {
+    background-color: #bb86fc;
+    border-color: #bb86fc;
+}
+
+body.dark-mode #results a {
+    color: #90ee90;
+}
+
+body.dark-mode #results a:visited {
+    color: #ff6b6b;
+}
