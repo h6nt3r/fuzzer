@@ -43,3 +43,7 @@ body.dark-mode #results a {
 body.dark-mode #results a:visited {
     color: #ff6b6b;
 }
+body.dark-mode #keywords1::placeholder {
+    color: #ffffff;
+    opacity: 0.6; /* Optional: to soften the white */
+}

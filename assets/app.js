@@ -4,29 +4,50 @@ function getKeywordss(){
     });
 }
 
+let clickedCount = 0; // global count
+
 function Generate() {
-    // Clear previous results
     $('#results').empty();
+    clickedCount = 0; // Reset on each generation
 
-    // Get payloads from the keywords1 textarea
-    var payloads = $('#keywords1').val().split('\n');
-    var targetUrl = $('#targets').val();
+    const payloads = $('#keywords1').val().split('\n');
+    const targetUrl = $('#targets').val();
+    let totalGenerated = 0;
 
-    // Generate URLs and make them clickable
-    $.each(payloads, function(index, payload) {
+    payloads.forEach((payload) => {
         if (payload.trim() !== '') {
-            var modifiedUrl = targetUrl.replace('FUZZ', encodeURIComponent(payload.trim()));
-            var link = $('<a></a>').attr('href', modifiedUrl).attr('target', '_blank').text(modifiedUrl);
+            totalGenerated++;
+            const modifiedUrl = targetUrl.replace('FUZZ', payload.trim());
+
+            const link = $('<a></a>', {
+                href: modifiedUrl,
+                target: '_blank',
+                text: modifiedUrl,
+                click: function () {
+                    clickedCount++;
+                    updateUrlCounter(clickedCount, totalGenerated);
+                }
+            });
+
             $('#results').append(link).append('<br>');
         }
     });
+
+    updateUrlCounter(clickedCount, totalGenerated);
 }
+function updateUrlCounter(clicked, total) {
+    document.getElementById('urlCount').textContent = `Total URLs: ${clicked} / ${total}`;
+}
+
+
 function resetAll() {
     document.getElementById('urla').value = '';
     document.getElementById('targets').value = '';
     document.getElementById('keywords1').value = '';
     document.getElementById('results').innerHTML = '';
+    updateUrlCounter(0, 0);
 }
+
 
 function toggleTheme() {
     const body = document.body;
