@@ -1,16 +1,20 @@
-#keywords1{
+#keywords1 {
     height: 100px;
-    overflow:scroll;
+    overflow: scroll;
 }
 
-#results{
-    height:535px; 
-    overflow:scroll; 
-    padding:10px;
+#results {
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 10px;
+    scrollbar-width: none; /* Firefox */
+}
+#results::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
 }
 
 /* Default link color */
- #results a {
+#results a {
     color: green;
     text-decoration: none;
 }
@@ -43,7 +47,125 @@ body.dark-mode #results a {
 body.dark-mode #results a:visited {
     color: #ff6b6b;
 }
-body.dark-mode #keywords1::placeholder {
+body.dark-mode #keywords1::placeholder,
+body.dark-mode .form-control::placeholder {
     color: #ffffff;
     opacity: 0.6; /* Optional: to soften the white */
+}
+
+#clear-urla-btn {
+    background: transparent !important;
+    border: none;
+    font-size: 1.5rem;
+    color: #888;
+    padding: 0 10px;
+    line-height: 1;
+    box-shadow: none;
+}
+
+#clear-urla-btn:hover {
+    color: #ff3333;
+    background: transparent !important;
+}
+
+/* Get Lists button color for light mode */
+#getlists-btn {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: #fff;
+    transition: background 0.2s, color 0.2s;
+}
+#getlists-btn:hover, #getlists-btn:focus {
+    background-color: #0056b3;
+    border-color: #0056b3;
+    color: #fff;
+}
+
+/* Generate links button color for light mode */
+#generate-btn {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: #fff;
+    transition: background 0.2s, color 0.2s;
+}
+#generate-btn:hover, #generate-btn:focus {
+    background-color: #1e7e34;
+    border-color: #1e7e34;
+    color: #fff;
+}
+
+/* Get Lists button color for dark mode */
+body.dark-mode #getlists-btn {
+    background-color: #64b5f6;
+    border-color: #64b5f6;
+    color: #222;
+}
+body.dark-mode #getlists-btn:hover, body.dark-mode #getlists-btn:focus {
+    background-color: #1976d2;
+    border-color: #1976d2;
+    color: #fff;
+}
+
+/* Generate links button color for dark mode */
+body.dark-mode #generate-btn {
+    background-color: #81c784;
+    border-color: #81c784;
+    color: #222;
+}
+body.dark-mode #generate-btn:hover, body.dark-mode #generate-btn:focus {
+    background-color: #388e3c;
+    border-color: #388e3c;
+    color: #fff;
+}
+
+#clear-targets-btn {
+    background: transparent !important;
+    border: none;
+    font-size: 1.5rem;
+    color: #888;
+    padding: 0 10px;
+    line-height: 1;
+}
+#clear-targets-btn:hover {
+    color: #ff3333;
+    background: transparent !important;
+}
+
+.generated-link-wrapper {
+    display: flex;
+    align-items: center;
+    padding: 0px 5px;
+    border-bottom: 1px solid #3332;
+    cursor: pointer;
+    transition: background 0.15s;
+    user-select: text;
+    border-radius: 10px;
+}
+.generated-link-wrapper:last-child {
+    border-bottom: none;
+}
+.generated-link-wrapper:hover, .generated-link-wrapper:focus {
+    background: #007bff !important;
+}
+body.dark-mode .generated-link-wrapper:hover, 
+body.dark-mode .generated-link-wrapper:focus {
+    background: #1976d2 !important;
+}
+.generated-link {
+    color: #fff !important;
+    text-decoration: none !important;
+    word-break: break-all;
+    flex: 1;
+}
+.generated-link:visited {
+    color: #fff !important;
+    text-decoration: none !important;
+}
+
+/* Remove underline from all generated links in results */
+#results a, 
+#results a:visited, 
+#results a:hover, 
+#results a:active {
+    text-decoration: none !important;
 }

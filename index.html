@@ -1,59 +1,75 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>URL Fuzzer</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta content='mijan' name='author'/>
-	<link rel="icon" href="https://github.githubassets.com/favicons/favicon.svg">
-	<link rel="stylesheet" href="./assets/style.css">
-	<script src="./assets/app.js" type="text/javascript"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-	<link rel="stylesheet" href="./assets/bootstrap.min.css">
+    <title>URL Fuzzer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content='mijan' name='author'/>
+    <link rel="icon" href="https://github.githubassets.com/favicons/favicon.svg">
+    <link rel="stylesheet" href="./assets/style.css">
+    <script src="./assets/app.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <link rel="stylesheet" href="./assets/bootstrap.min.css">
 </head>
 <body class="dark-mode">
 
 <div class="container-fluid">
-	<div class="row align-items-center mb-3">
-		<div class="col-md-5 text-center text-md-start">
-			<h4>All type of URL Injection Fuzzer</h4>
-		</div>
-		
-		<div class="col-3">
-			<h3 id="urlCount">Total urls: 0/0</h3>
-		</div>
-		<div class="col-md-4 text-center text-md-end">
-			<button class="btn btn-secondary me-2" onclick="resetAll()">Reset</button>
-			<button class="btn btn-dark" id="themeToggleBtn" onclick="toggleTheme()">Dark Mode</button>
-		</div>
-	</div>
+    <div class="row align-items-center mb-3">
+        <div class="col-md-8 text-center text-md-start">
+            <h4>All type of URL Injection Fuzzer</h4>
+        </div>
+        <div class="col-md-4 text-center text-md-end">
+            <button class="btn btn-secondary me-2" onclick="resetAll()">Reset</button>
+            <button class="btn btn-info me-2" id="copyLinksBtn" onclick="copyAllLinks()">Copy all links</button>
+            <button class="btn btn-dark" id="themeToggleBtn" onclick="toggleTheme()">Dark Mode</button>
+        </div>
+    </div>
 
-	<div class="row p-0 m-0">
-		<div class="col-6">
-			<div class="input-group ">
-				<label class="input-group-text">Payloads link</label> 
-				<input type="text"  id="urla" class="form-control" placeholder="Enter your payloads link" value="https://raw.githubusercontent.com/h6nt3r/payloads/refs/heads/main/xss/xssBlind.txt">
-				<button class="btn btn-danger" onclick="getKeywordss()">Get Lists</button>
-			</div>
-			
-		</div>
-		<div class="col-6">
-			<div class="input-group">
-				<span class="input-group-text">Target</span> 
-				<input type="text" id="targets" value='http://testphp.vulnweb.com?cat=FUZZ&test=1' class="form-control" placeholder='http://testphp.vulnweb.com?cat=FUZZ&test=1'>
-				<button class="btn btn-danger input-group-text" onclick="Generate()">Generate links</button>
-			</div>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-12">
-			<textarea class="form-control" placeholder='You can type your custom payloads here by every new line OR After click "Get Lists" button payloads will shown here' id="keywords1"></textarea>
-		</div>
-		<div class="col-12">
-			<table>
-				<div id="results" class="form-control"></div>
-			</table>
-		</div>
-	</div>
+    <div class="row">
+        <div class="col-12">
+            <div class="mb-3 payload-group">
+                <div class="input-group" style="overflow:visible;">
+                    <span class="input-group-text rounded-start" id="payloads-label" style="font-weight:bold;cursor:pointer;white-space:nowrap;margin-left:6px;margin-right:-1px;z-index:2;">
+                        🔗 <label for="urla" class="mb-0" style="cursor:pointer;">Payloads link</label>
+                    </span>
+                    <div class="position-relative flex-grow-1">
+                        <input type="text" id="urla" class="form-control" style="padding-right:2.5rem; border-radius:0;" placeholder="Enter your payloads link" value="https://raw.githubusercontent.com/h6nt3r/collection_payloads/refs/heads/main/xss/xssCollected.txt" aria-label="Payloads link" aria-describedby="payloads-label">
+                        <button class="btn" type="button" id="clear-urla-btn" onclick="document.getElementById('urla').value='';" title="Clear" style="position:absolute;top:50%;right:10px;transform:translateY(-50%);background:transparent !important;border:none;font-size:1.5rem;color:#888;line-height:1;padding:0;">
+                            &#10006;
+                        </button>
+                    </div>
+                    <button class="btn btn-danger rounded-end" type="button" id="getlists-btn" onclick="getKeywordss()" style="margin-right:6px;margin-left:-1px;z-index:2;">
+                        Get Lists
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="mb-3 target-group">
+                <div class="input-group" style="overflow:visible;">
+                    <span class="input-group-text rounded-start" id="targets-label" style="font-weight:bold;cursor:pointer;white-space:nowrap;margin-left:6px;margin-right:-1px;z-index:2;">
+                        🎯 <label for="targets" class="mb-0" style="cursor:pointer;">Target</label>
+                    </span>
+                    <div class="position-relative flex-grow-1">
+                        <input type="text" id="targets" class="form-control" style="padding-right:2.5rem; border-radius:0;" value='http://testphp.vulnweb.com?cat=FUZZ&test=1' placeholder='http://testphp.vulnweb.com?cat=FUZZ&test=1' aria-label="Target" aria-describedby="targets-label">
+                        <button class="btn" type="button" id="clear-targets-btn" onclick="document.getElementById('targets').value='';" title="Clear" style="position:absolute;top:50%;right:10px;transform:translateY(-50%);background:transparent !important;border:none;font-size:1.5rem;color:#888;line-height:1;padding:0;">
+                            &#10006;
+                        </button>
+                    </div>
+                    <button class="btn btn-danger rounded-end" type="button" id="generate-btn" onclick="Generate()" style="margin-right:6px;margin-left:-1px;z-index:2;">
+                        Generate links
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <textarea class="form-control" placeholder='You can type your custom payloads here by every new line OR After click "Get Lists" button payloads will shown here' id="keywords1"></textarea>
+        </div>
+        <div class="col-12">
+            <div id="results"></div>
+        </div>
+    </div>
 </div>
 
 <div class="container-fluid">
@@ -63,6 +79,74 @@
         </div>
     </div>
 </div>
-	<script src="./assets/bootstrap.bundle.min.js"></script>
+    <script src="./assets/bootstrap.bundle.min.js"></script>
+    <script>
+// NOTE: This duplicate function is also updated. 
+// For best practice, this should be removed, and only the app.js version used.
+function Generate() {
+    const target = document.getElementById('targets').value;
+    const payloads = document.getElementById('keywords1').value.split('\n').filter(Boolean);
+    const resultsDiv = document.getElementById('results');
+    resultsDiv.innerHTML = '';
+
+    payloads.forEach((payload, idx) => {
+        // The payload is now used directly without encoding
+        const url = target.replace('FUZZ', payload);
+        const wrapper = document.createElement('div');
+        wrapper.className = 'generated-link-wrapper';
+        wrapper.tabIndex = 0;
+
+        // Checkbox
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'generated-link-checkbox';
+        checkbox.style.marginRight = '10px';
+        checkbox.tabIndex = -1;
+
+        // Link
+        const link = document.createElement('a');
+        link.href = url;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.textContent = url;
+        link.className = 'generated-link';
+
+        // Prevent default link behavior to avoid double opening
+        link.onclick = function(e) {
+            e.preventDefault();
+            checkbox.checked = true;
+            window.open(url, '_blank', 'noopener');
+        };
+
+        // Make the whole div clickable
+        wrapper.onclick = function(e) {
+            // Only check if not clicking the checkbox or link itself
+            if (e.target !== checkbox && e.target !== link) {
+                checkbox.checked = true;
+                window.open(url, '_blank', 'noopener');
+            }
+        };
+
+        wrapper.appendChild(checkbox);
+        wrapper.appendChild(link);
+        resultsDiv.appendChild(wrapper);
+    });
+}
+
+function copyAllLinks() {
+    const links = [];
+    document.querySelectorAll('#results .generated-link').forEach(link => {
+        links.push(link.href);
+    });
+    if (links.length) {
+        navigator.clipboard.writeText(links.join('\n')).then(() => {
+            document.getElementById('copyLinksBtn').textContent = "Copied!";
+            setTimeout(() => {
+                document.getElementById('copyLinksBtn').textContent = "Copy all links";
+            }, 1200);
+        });
+    }
+}
+</script>
 </body>
 </html>

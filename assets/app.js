@@ -1,53 +1,69 @@
-function getKeywordss(){
+function getKeywordss() {
     $.get($('#urla').val(), function(resp) {
         document.getElementById('keywords1').value = resp;
     });
 }
 
-let clickedCount = 0; // global count
-
 function Generate() {
-    $('#results').empty();
-    clickedCount = 0; // Reset on each generation
+    const target = document.getElementById('targets').value;
+    const payloads = document.getElementById('keywords1').value.split('\n').filter(Boolean);
+    const resultsDiv = document.getElementById('results');
+    resultsDiv.innerHTML = '';
 
-    const payloads = $('#keywords1').val().split('\n');
-    const targetUrl = $('#targets').val();
-    let totalGenerated = 0;
+    payloads.forEach((payload, idx) => {
+        // The payload is now used directly without encoding
+        const url = target.replace('FUZZ', payload);
+        const wrapper = document.createElement('div');
+        wrapper.className = 'generated-link-wrapper';
+        wrapper.tabIndex = 0;
 
-    payloads.forEach((payload) => {
-        if (payload.trim() !== '') {
-            totalGenerated++;
-            const modifiedUrl = targetUrl.replace('FUZZ', payload.trim());
+        // Checkbox
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'generated-link-checkbox';
+        checkbox.style.marginRight = '10px';
+        checkbox.tabIndex = -1;
 
-            const link = $('<a></a>', {
-                href: modifiedUrl,
-                target: '_blank',
-                text: modifiedUrl,
-                click: function () {
-                    clickedCount++;
-                    updateUrlCounter(clickedCount, totalGenerated);
+        // Link
+        const link = document.createElement('a');
+        link.href = url;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.textContent = url;
+        link.className = 'generated-link';
+
+        // Prevent default link behavior to avoid double opening
+        link.onclick = function(e) {
+            e.preventDefault();
+            if (!checkbox.checked) {
+                checkbox.checked = true;
+            }
+            window.open(url, '_blank', 'noopener');
+        };
+
+        // Make the whole div clickable
+        wrapper.onclick = function(e) {
+            // Only check if not clicking the checkbox or link itself
+            if (e.target !== checkbox && e.target !== link) {
+                if (!checkbox.checked) {
+                    checkbox.checked = true;
                 }
-            });
+                window.open(url, '_blank', 'noopener');
+            }
+        };
 
-            $('#results').append(link).append('<br>');
-        }
+        wrapper.appendChild(checkbox);
+        wrapper.appendChild(link);
+        resultsDiv.appendChild(wrapper);
     });
-
-    updateUrlCounter(clickedCount, totalGenerated);
 }
-function updateUrlCounter(clicked, total) {
-    document.getElementById('urlCount').textContent = `Total URLs: ${clicked} / ${total}`;
-}
-
 
 function resetAll() {
     document.getElementById('urla').value = '';
     document.getElementById('targets').value = '';
     document.getElementById('keywords1').value = '';
     document.getElementById('results').innerHTML = '';
-    updateUrlCounter(0, 0);
 }
-
 
 function toggleTheme() {
     const body = document.body;
