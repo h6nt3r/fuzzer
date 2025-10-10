@@ -1,11 +1,9 @@
-document.addEventListener('DOMContentLoaded', ()=>{
-
+document.addEventListener('DOMContentLoaded', () => {
   const urlaInput = document.getElementById('urla');
   const keywordsTextarea = document.getElementById('keywords1');
   const targetsInput = document.getElementById('targets');
   const resultsDiv = document.getElementById('results');
-  const linkRangeSelect = document.getElementById('linkRangeSelect');
-  const copyBtn = document.getElementById('copyLinksBtn');
+
   const resetBtn = document.getElementById('resetBtn');
   const themeBtn = document.getElementById('themeToggleBtn');
   const getlistsBtn = document.getElementById('getlists-btn');
@@ -13,64 +11,67 @@ document.addEventListener('DOMContentLoaded', ()=>{
   const clearUrlaBtn = document.getElementById('clear-urla-btn');
   const clearTargetsBtn = document.getElementById('clear-targets-btn');
 
+  // custom dropdown
+  const linkRangeBtn = document.getElementById('linkRangeBtn');
+  const linkRangeMenu = document.getElementById('linkRangeMenu');
+
   let totalLinks = 0;
 
-  // update dropdown based on total links
-  function updateDropdown(total, step = 15){
-    linkRangeSelect.innerHTML = '';
-    const placeholder = document.createElement('option');
-    placeholder.value = '';
-    placeholder.disabled = true;
-    placeholder.selected = true;
-    placeholder.textContent = total > 0 ? 'Select range' : 'No links';
-    linkRangeSelect.appendChild(placeholder);
+  // update custom dropdown
+  function updateDropdown(total, step = 15) {
+    linkRangeMenu.innerHTML = '';
+    linkRangeBtn.textContent = total > 0 ? "Select for copy" : "No links";
 
-    if(total <= 0) { linkRangeSelect.disabled = true; return; }
-    linkRangeSelect.disabled = false;
+    if (total <= 0) return;
 
-    for(let start = 1; start <= total; start += step){
+    // All option
+    const allLi = document.createElement('li');
+    allLi.innerHTML = `<a class="dropdown-item" href="#" data-range="1-${total}">All (1-${total})</a>`;
+    linkRangeMenu.appendChild(allLi);
+
+    // Ranges
+    for (let start = 1; start <= total; start += step) {
       const end = Math.min(start + step - 1, total);
-      const opt = document.createElement('option');
-      opt.value = `${start}-${end}`;
-      opt.textContent = `${start}-${end}`;
-      linkRangeSelect.appendChild(opt);
-    }
-
-    // add final "All" option if last end != total (or always allow All)
-    if(total > 0){
-      const allOpt = document.createElement('option');
-      allOpt.value = `1-${total}`;
-      allOpt.textContent = `All (1-${total})`;
-      // place it at end
-      linkRangeSelect.appendChild(allOpt);
+      const li = document.createElement('li');
+      li.innerHTML = `<a class="dropdown-item" href="#" data-range="${start}-${end}">${start}-${end}</a>`;
+      linkRangeMenu.appendChild(li);
     }
   }
 
-  // fetch payloads (fetch API, no jQuery)
-  getlistsBtn.addEventListener('click', ()=>{
+  // fetch payloads
+  getlistsBtn.addEventListener('click', () => {
     const url = urlaInput.value.trim();
-    if(!url){
+    if (!url) {
       alert('Provide a raw/public payload URL (or paste payloads below).');
       return;
     }
-    fetch(url).then(r=>{
-      if(!r.ok) throw new Error('Network error');
-      return r.text();
-    }).then(text=>{
-      keywordsTextarea.value = text;
-    }).catch(err=>{
-      console.error(err);
-      alert('Unable to fetch payloads. Check URL or CORS. (Try serving locally)');
-    });
+    fetch(url)
+      .then(r => {
+        if (!r.ok) throw new Error('Network error');
+        return r.text();
+      })
+      .then(text => {
+        keywordsTextarea.value = text;
+      })
+      .catch(err => {
+        console.error(err);
+        alert('Unable to fetch payloads. Check URL or CORS. (Try serving locally)');
+      });
   });
 
-  // generate
-  generateBtn.addEventListener('click', ()=>{
+  // generate links
+  generateBtn.addEventListener('click', () => {
     resultsDiv.innerHTML = '';
     const target = targetsInput.value.trim();
-    if(!target.includes('FUZZ')){ resultsDiv.textContent = 'Target must include FUZZ (e.g. ?p=FUZZ).'; return; }
-    const payloads = keywordsTextarea.value.split('\n').map(s=>s.trim()).filter(Boolean);
-    if(payloads.length === 0){ resultsDiv.textContent = 'No payloads found.'; return; }
+    if (!target.includes('FUZZ')) {
+      resultsDiv.textContent = 'Target must include FUZZ (e.g. ?p=FUZZ).';
+      return;
+    }
+    const payloads = keywordsTextarea.value.split('\n').map(s => s.trim()).filter(Boolean);
+    if (payloads.length === 0) {
+      resultsDiv.textContent = 'No payloads found.';
+      return;
+    }
 
     payloads.forEach((payload, idx) => {
       const serial = idx + 1;
@@ -96,15 +97,14 @@ document.addEventListener('DOMContentLoaded', ()=>{
       link.target = '_blank';
       link.rel = 'noopener noreferrer';
 
-      // clicking behaviors
-      link.addEventListener('click', (e)=>{
+      link.addEventListener('click', (e) => {
         e.preventDefault();
         checkbox.checked = true;
         window.open(url, '_blank', 'noopener');
       });
 
-      wrapper.addEventListener('click', (e)=>{
-        if(e.target === checkbox || e.target === link) return;
+      wrapper.addEventListener('click', (e) => {
+        if (e.target === checkbox || e.target === link) return;
         checkbox.checked = !checkbox.checked;
       });
 
@@ -118,54 +118,69 @@ document.addEventListener('DOMContentLoaded', ()=>{
     updateDropdown(totalLinks);
   });
 
-  // copy selected range
-  copyBtn.addEventListener('click', ()=>{
-    if(totalLinks === 0){
-      alert('No links generated.');
-      return;
-    }
-    const val = linkRangeSelect.value;
-    if(!val){
-      alert('Please select a range from the dropdown first.');
-      return;
-    }
-    const [start, end] = val.split('-').map(Number);
-    if(!start || !end){
-      alert('Invalid range selected.');
-      return;
-    }
+  // handle dropdown click
+  linkRangeMenu.addEventListener('click', (e) => {
+    e.preventDefault();
+    const a = e.target.closest('a[data-range]');
+    if (!a) return;
+
+    // remove old active
+    linkRangeMenu.querySelectorAll('a').forEach(el => {
+      el.innerHTML = el.innerHTML.replace(/<i.*<\/i>/, '').trim();
+    });
+
+    // mark selected with green icon
+    a.innerHTML = a.textContent + ' <i class="bi bi-check-circle-fill text-success"></i>';
+
+    const [start, end] = a.dataset.range.split('-').map(Number);
+    if (!start || !end) return;
 
     const collected = [];
     const wrappers = Array.from(document.querySelectorAll('#results .generated-link-wrapper'));
-    wrappers.forEach((wrapper, i)=>{
+
+    wrappers.forEach((wrapper, i) => {
       const serial = i + 1;
       const cb = wrapper.querySelector('.generated-link-checkbox');
-      const a = wrapper.querySelector('.generated-link');
-      if(serial >= start && serial <= end){
+      const link = wrapper.querySelector('.generated-link');
+
+      if (serial >= start && serial <= end) {
         cb.checked = true;
-        collected.push(a.href);
+        collected.push(link.href);
       } else {
         cb.checked = false;
       }
     });
 
-    if(collected.length === 0){
-      alert('No links found in that range.');
-      return;
-    }
+    if (collected.length === 0) return;
 
-    navigator.clipboard.writeText(collected.join('\n')).then(()=>{
-      const old = copyBtn.textContent;
-      copyBtn.textContent = 'Copied!';
-      setTimeout(()=>{ copyBtn.textContent = old; }, 1200);
-    }).catch(err=>{
-      console.error(err);
-      alert('Copy failed (browser may block clipboard).');
-    });
+    // copy to clipboard
+    navigator.clipboard.writeText(collected.join('\n')).then(() => {
+      linkRangeBtn.textContent = `Copied: ${a.dataset.range}`;
+
+      // Create notification
+      const notification = document.createElement('div');
+      notification.className = 'notification';
+      notification.textContent = `Copied ${a.dataset.range} range`;
+      document.body.appendChild(notification);
+
+      // Show notification
+      setTimeout(() => {
+        notification.classList.add('show');
+      }, 100);
+
+      // Hide notification after 2 seconds
+      setTimeout(() => {
+        notification.classList.remove('show');
+        // Remove notification from DOM after animation
+        setTimeout(() => {
+          notification.remove();
+        }, 500);
+      }, 2000);
+    }).catch(err => console.error('Clipboard copy failed:', err));
   });
 
   // reset
-  resetBtn.addEventListener('click', ()=>{
+  resetBtn.addEventListener('click', () => {
     urlaInput.value = '';
     keywordsTextarea.value = '';
     targetsInput.value = '';
@@ -175,16 +190,14 @@ document.addEventListener('DOMContentLoaded', ()=>{
   });
 
   // theme toggle
-  themeBtn.addEventListener('click', ()=>{
+  themeBtn.addEventListener('click', () => {
     document.body.classList.toggle('dark-mode');
     themeBtn.textContent = document.body.classList.contains('dark-mode') ? 'Light Mode' : 'Dark Mode';
   });
 
-  // clear controls
-  clearUrlaBtn.addEventListener('click', ()=> urlaInput.value = '');
-  clearTargetsBtn.addEventListener('click', ()=> targetsInput.value = '');
+  clearUrlaBtn.addEventListener('click', () => urlaInput.value = '');
+  clearTargetsBtn.addEventListener('click', () => targetsInput.value = '');
 
   // init
   updateDropdown(0);
-
 });
